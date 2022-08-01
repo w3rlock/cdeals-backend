@@ -43,7 +43,7 @@ class PostController {
     async getAvatar(req, res){
         const { filename } = req.params;
         const dirname = path.resolve();
-        const fullfilepath = path.join(dirname, 'uploads/' + filename);
+        const fullfilepath = path.join('/home/ubuntu/backend/cdeals-backend/', 'uploads/' + filename);
         return res.sendFile(fullfilepath);
     }
 

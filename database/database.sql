@@ -5,14 +5,15 @@ create TABLE users(
     username VARCHAR(255),
     email VARCHAR(255),
     phone VARCHAR(255),
-    pass VARCHAR(255)
+    pass VARCHAR(255),
+    points INTEGER,
 );
 
 create TABLE portfolio(
     id SERIAL PRIMARY KEY,
     img VARCHAR(255),
-    role VARCHAR(255),
-    category VARCHAR(255),
+    role INTEGER,
+    category INTEGER,
     about VARCHAR(255),
     user_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES users (id)
