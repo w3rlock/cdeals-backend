@@ -7,14 +7,20 @@ class PostController {
         const {role, category, about, user_id, links} = req.body
         const portfolio = await db.query(`INSERT INTO portfolio (img, role, category, about, user_id) values ($1, $2, $3, $4, $5) RETURNING *`, [req.files.avatar[0].filename, role, category, about, user_id])
         const portfiles = req.files.portfile;
-        for(var i=0; i<portfiles.length; i++){
-            const p_file = await db.query(`INSERT INTO files (f_name, user_id) values ($1, $2) RETURNING *`, [portfiles[i].filename, user_id])
+        if(portfiles){
+            for(var i=0; i<portfiles.length; i++){
+                const p_file = await db.query(`INSERT INTO files (f_name, user_id) values ($1, $2) RETURNING *`, [portfiles[i].filename, user_id])
+            }
         }
+        
         const arr = links.split(',');
-        for(var i=0; i<arr.length; i+=2){
-            // console.log(arr[i]+' '+arr[i+1])
-            const link = await db.query(`INSERT INTO links (l_name, user_id, link_name) values ($1, $2, $3) RETURNING *`, [arr[i+1], user_id, arr[i]])
+        if(links){
+            for(var i=0; i<arr.length; i+=2){
+                // console.log(arr[i]+' '+arr[i+1])
+                const link = await db.query(`INSERT INTO links (l_name, user_id, link_name) values ($1, $2, $3) RETURNING *`, [arr[i+1], user_id, arr[i]])
+            }
         }
+        
         res.json(portfolio.rows)
 
     }
