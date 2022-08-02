@@ -47,7 +47,8 @@ class PostController {
         const { filename } = req.params;
         const dirname = path.resolve();
         ///home/ubuntu/backend/cdeals-backend/
-        const fullfilepath = path.join(dirname, 'uploads/' + filename);
+        //dirname
+        const fullfilepath = path.join('/home/ubuntu/backend/cdeals-backend', 'uploads/' + filename);
         return res.sendFile(fullfilepath);
     }
 
