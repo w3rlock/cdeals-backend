@@ -36,12 +36,14 @@ create TABLE files(
     id SERIAL PRIMARY KEY,
     f_name VARCHAR(255),
     user_id INTEGER,
+    collab_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 create TABLE links(
     id SERIAL PRIMARY KEY,
     l_name VARCHAR(255),
+    link_name VARCHAR(255),
     user_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );

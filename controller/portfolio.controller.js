@@ -1,5 +1,6 @@
 const db = require('../database/db')
 const path = require('path');
+const { Console } = require('console');
 
 class PostController {
     async createPortfolio(req, res){
@@ -9,8 +10,10 @@ class PostController {
         for(var i=0; i<portfiles.length; i++){
             const p_file = await db.query(`INSERT INTO files (f_name, user_id) values ($1, $2) RETURNING *`, [portfiles[i].filename, user_id])
         }
-        for(var i=0; i<links.split(',').length; i++){
-            const link = await db.query(`INSERT INTO links (l_name, user_id) values ($1, $2) RETURNING *`, [links.split(',')[i], user_id])
+        const arr = links.split(',');
+        for(var i=0; i<arr.length; i+=2){
+            // console.log(arr[i]+' '+arr[i+1])
+            const link = await db.query(`INSERT INTO links (l_name, user_id, link_name) values ($1, $2, $3) RETURNING *`, [arr[i+1], user_id, arr[i]])
         }
         res.json(portfolio.rows)
 
@@ -43,7 +46,8 @@ class PostController {
     async getAvatar(req, res){
         const { filename } = req.params;
         const dirname = path.resolve();
-        const fullfilepath = path.join('/home/ubuntu/backend/cdeals-backend/', 'uploads/' + filename);
+        ///home/ubuntu/backend/cdeals-backend/
+        const fullfilepath = path.join(dirname, 'uploads/' + filename);
         return res.sendFile(fullfilepath);
     }
 
@@ -55,7 +59,7 @@ class PostController {
 
     async getLinks(req, res){
         const id = req.params.id
-        const links = await db.query('SELECT id, l_name FROM links WHERE user_id = $1', [id])
+        const links = await db.query('SELECT id, l_name, link_name FROM links WHERE user_id = $1', [id])
         res.json(links.rows)
     }
 
@@ -71,6 +75,12 @@ class PostController {
     async getFiles(req, res){
         const id = req.query.id
         const files = await db.query('SELECT * FROM files WHERE user_id = $1', [id])
+        res.json(files.rows)
+    }
+
+    async getFilesByCollab(req, res){
+        const id = req.query.id
+        const files = await db.query('SELECT * FROM files WHERE collab_id = $1', [id])
         res.json(files.rows)
     }
 

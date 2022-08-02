@@ -15,8 +15,13 @@ class CollabController {
 
     async createCollab(req, res){
         const collab = req.body
-        const result = await db.query('INSERT INTO collabs (title, descr, u_from, u_to, c_status) VALUES ($1, $2, $3, $4, $5) RETURNING *', [collab.title, collab.descr, collab.u_from, collab.u_to, collab.c_status])
-        res.json(result)
+        const portfiles = req.files.portfile;
+        const c_result = await db.query('INSERT INTO collabs (title, descr, u_from, u_to, c_status) VALUES ($1, $2, $3, $4, $5) RETURNING *', [collab.title, collab.descr, collab.u_from, collab.u_to, collab.c_status])
+        // console.log(c_result.rows[0].id);
+        for(var i=0; i<portfiles.length; i++){
+            const p_file = await db.query(`INSERT INTO files (f_name, collab_id) values ($1, $2) RETURNING *`, [portfiles[i].filename, c_result.rows[0].id])
+        }
+        res.json(c_result)
     }
 
     async getCollabById(req, res){

@@ -4,9 +4,17 @@ class UserController {
     async createUser(req, res){
         try{
             const {first_name, last_name, username, email, phone, pass} = req.body
-            const newUser = await db.query(`INSERT INTO users (first_name, last_name, username, email, phone, pass, points) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [first_name, last_name, username, email, phone, pass, 0])
+
+            const ifUser = await db.query('SELECT * FROM users WHERE username=$1 OR email=$2', [username, email]);
+            console.log(ifUser.rows)
+            if(ifUser.rows.length === 0){
+                const newUser = await db.query(`INSERT INTO users (first_name, last_name, username, email, phone, pass, points) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [first_name, last_name, username, email, phone, pass, 0])
+                return res.json(newUser.rows[0].id)
+            }else{
+                return res.status(400).json('Username or Email exist');
+            }
+
             // console.log(first_name, last_name, username, email, phone, pass)
-            return res.json(newUser.rows[0].id)
         }
         catch(e){
             console.log(e)

@@ -14,6 +14,7 @@ router.get('/portfolio/:filename', portfolioController.getAvatar)
 router.get('/links/:id', portfolioController.getLinks)
 router.put('/links', portfolioController.updateLinks)
 router.get('/files', portfolioController.getFiles)
+router.get('/collabfiles', portfolioController.getFilesByCollab)
 router.put('/portfolio', cpUpload, portfolioController.updatePortfolio)
 
 
