@@ -4,6 +4,7 @@ const upload = multer({
     storage: multer.diskStorage(
         {
             destination: function (req, file, cb) {
+                ///home/ubuntu/backend/cdeals-backend/uploads/
                 cb(null, '/home/ubuntu/backend/cdeals-backend/uploads/');
             },
             filename: function (req, file, cb) {

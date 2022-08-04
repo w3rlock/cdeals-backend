@@ -16,6 +16,9 @@ router.put('/links', portfolioController.updateLinks)
 router.get('/files', portfolioController.getFiles)
 router.get('/collabfiles', portfolioController.getFilesByCollab)
 router.put('/portfolio', cpUpload, portfolioController.updatePortfolio)
+router.delete('/deletefile/:id', portfolioController.deleteFile)
+router.delete('/deletelink/:id', portfolioController.deleteLink)
+
 
 
 module.exports = router;

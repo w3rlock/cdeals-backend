@@ -81,13 +81,23 @@ class UserController {
 
     async getListUserWithPortfolio(req, res){
         const category = req.query.category
+        const role = req.query.role
         console.log(category);
-        if(category == -1){
+        console.log(role);
+        if(category == -1 && role == -1){
             console.log('test1')
             const user = await db.query(`SELECT u.id, u.username, u.points, c.category, p.about, p.role, p.img FROM users u, portfolio p, category c, roles r WHERE u.id = p.user_id AND p.category = c.id AND p.role = r.id;`)
             res.json(user.rows)
-        }else{
+        }else if(category != -1 && role == -1){
             console.log('test')
+            const user = await db.query(`SELECT u.id, u.username, u.points, c.category, p.about, p.role, p.img FROM users u, portfolio p, category c, roles r WHERE u.id = p.user_id AND p.category = c.id AND p.role = r.id AND p.category=$1;`,[category])
+            res.json(user.rows)
+        }else if(role != -1 && category == -1){
+            console.log('test2')
+            const user = await db.query(`SELECT u.id, u.username, u.points, c.category, p.about, p.role, p.img FROM users u, portfolio p, category c, roles r WHERE u.id = p.user_id AND p.category = c.id AND p.role = r.id AND p.role=$1;`,[role])
+            res.json(user.rows)
+        }else if(role != -1 && category != -1){
+            console.log('test3')
             const user = await db.query(`SELECT u.id, u.username, u.points, c.category, p.about, p.role, p.img FROM users u, portfolio p, category c, roles r WHERE u.id = p.user_id AND p.category = c.id AND p.role = r.id AND p.category=$1;`,[category])
             res.json(user.rows)
         }

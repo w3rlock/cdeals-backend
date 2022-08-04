@@ -6,7 +6,9 @@ class PostController {
     async createPortfolio(req, res){
         const {role, category, about, user_id, links} = req.body
         const portfolio = await db.query(`INSERT INTO portfolio (img, role, category, about, user_id) values ($1, $2, $3, $4, $5) RETURNING *`, [req.files.avatar[0].filename, role, category, about, user_id])
-        const portfiles = req.files.portfile;
+        const portfiles = req.files;
+        // console.log(portfiles)
+        // console.log(req.body)
         if(portfiles){
             for(var i=0; i<portfiles.length; i++){
                 const p_file = await db.query(`INSERT INTO files (f_name, user_id) values ($1, $2) RETURNING *`, [portfiles[i].filename, user_id])
@@ -27,13 +29,13 @@ class PostController {
 
     async updatePortfolio(req, res){
         const {role, category, about, user_id, links} = req.body
-        console.log(user_id)
+        // console.log(req.body)
         if(req.files.avatar){
             const edit = await db.query('UPDATE portfolio set img=$1, role=$2, category=$3, about=$4, user_id=$5 WHERE user_id=$5', [req.files.avatar[0].filename, role, category, about, user_id])
             res.json(req.files.avatar[0].filename)
         }else{
-            const edit = await db.query('UPDATE portfolio set role=$2, category=$3, about=$4, user_id=$5 WHERE user_id=$5', [role, category, about, user_id])
-            res.json(edit.rows[0])
+            const edit = await db.query('UPDATE portfolio set role=$1, category=$2, about=$3, user_id=$4 WHERE user_id=$4', [role, category, about, user_id])
+            res.json('withoutavatar')
         }
         if(req.files.portfile){
             const portfiles = req.files.portfile;
@@ -41,10 +43,13 @@ class PostController {
                 const p_file = await db.query(`INSERT INTO files (f_name, user_id) values ($1, $2) RETURNING *`, [portfiles[i].filename, user_id])
             }
         }
-
+        console.log(links)
+        const arr = links.split(',');
         if(links){
-            for(var i=0; i<links.split(',').length; i++){
-                const link = await db.query(`INSERT INTO links (l_name, user_id) values ($1, $2) RETURNING *`, [links.split(',')[i], user_id])
+            for(var i=0; i<arr.length; i+=2){
+                // console.log(arr[i]+' '+arr[i+1])
+                const link = await db.query(`INSERT INTO links (l_name, user_id, link_name) values ($1, $2, $3) RETURNING *`, [arr[i+1], user_id, arr[i]])
+                console.log(link.rows)
             }
         }
     }
@@ -89,6 +94,18 @@ class PostController {
         const id = req.query.id
         const files = await db.query('SELECT * FROM files WHERE collab_id = $1', [id])
         res.json(files.rows)
+    }
+
+    async deleteFile(req, res){
+        const id = req.params.id
+        await db.query('DELETE FROM files WHERE id=$1', [id])
+        res.json('deleted')
+    }
+
+    async deleteLink(req, res){
+        const id = req.params.id
+        await db.query('DELETE FROM links WHERE id=$1', [id])
+        res.json('deleted')
     }
 
     
