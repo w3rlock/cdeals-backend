@@ -6,7 +6,7 @@ class PostController {
     async createPortfolio(req, res){
         const {role, category, about, user_id, links} = req.body
         const portfolio = await db.query(`INSERT INTO portfolio (img, role, category, about, user_id) values ($1, $2, $3, $4, $5) RETURNING *`, [req.files.avatar[0].filename, role, category, about, user_id])
-        const portfiles = req.files;
+        const portfiles = req.files.portfile;
         // console.log(portfiles)
         // console.log(req.body)
         if(portfiles){
@@ -22,7 +22,6 @@ class PostController {
                 const link = await db.query(`INSERT INTO links (l_name, user_id, link_name) values ($1, $2, $3) RETURNING *`, [arr[i+1], user_id, arr[i]])
             }
         }
-        
         res.json(portfolio.rows)
 
     }
